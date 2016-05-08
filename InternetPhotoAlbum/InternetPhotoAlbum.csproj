@@ -175,12 +175,17 @@
     <Compile Include="Models\ApplicationUserManager.cs" />
     <Compile Include="Models\LoginModel.cs" />
     <Compile Include="Models\Photo.cs" />
+    <Compile Include="Models\PhotosModel.cs" />
     <Compile Include="Models\Rating.cs" />
     <Compile Include="Models\RegisterModel.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Data\PhotoAlbumDb.mdf" />
+    <Content Include="App_Data\PhotoAlbumDb_log.ldf">
+      <DependentUpon>PhotoAlbumDb.mdf</DependentUpon>
+    </Content>
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="favicon.ico" />
@@ -223,15 +228,12 @@
     <Content Include="Views\Home\EditPhoto.cshtml" />
     <Content Include="Views\Home\UserSettings.cshtml" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="App_Data\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="packages.config" />
-    <None Include="Project_Readme.html" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
   <PropertyGroup>

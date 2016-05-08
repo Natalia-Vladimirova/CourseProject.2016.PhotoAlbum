@@ -33,8 +33,8 @@ namespace InternetPhotoAlbum.Controllers
         public ActionResult Index(string id)
         {
             User user = (from u in Context.Users
-                             where u.Id == id
-                             select u).FirstOrDefault();
+                         where u.Id == id
+                         select u).FirstOrDefault();
 
             if (user == null)
             {
@@ -46,34 +46,95 @@ namespace InternetPhotoAlbum.Controllers
             return View(user);
         }
 
-        public async Task<ActionResult> Photos(int id = 0)
+        public async Task<ActionResult> Photos(int id = 0, string userName = null)
         {
-            User user = await UserManager.FindByNameAsync(User.Identity.Name);
+            User user = null;
 
-            List<Photo> photos = (from ph in Context.Photos
-                                         where ph.UserId == user.Id
-                                         select ph).ToList();
+            if (userName != null)
+            {
+                user = await UserManager.FindByNameAsync(userName);
+            }
 
-            if (TempData["CurrentPhotoId"] == null)
+            if (user == null)
             {
-                ViewBag.CurrentPhotoId = id;
+                user = await UserManager.FindByNameAsync(User.Identity.Name);
             }
-            else
+
+            PhotosModel photosModel = new PhotosModel()
             {
-                ViewBag.CurrentPhotoId = TempData["CurrentPhotoId"];
-            }
-            return View(photos);
+                CurrentPhotoId = id,
+                ChosenUser = user,
+                Photos = user.Photos
+            };
+
+            return View(photosModel);
         }
 
-        public ActionResult ChangePhotoPosition(int id = 0)
+        public async Task<ActionResult> SearchPhotos(string photoName, string userName, int currentPhotoId = 0)
         {
-            TempData["CurrentPhotoId"] = id;
-            return RedirectToAction("Photos");
+            User user = null;
+
+            if (userName != null)
+            {
+                user = await UserManager.FindByNameAsync(userName);
+            }
+
+            if (user == null)
+            {
+                user = await UserManager.FindByNameAsync(User.Identity.Name);
+            }
+
+            IEnumerable<Photo> photos = (from ph in Context.Photos
+                                         where ph.UserId == user.Id && ph.Name.Contains(photoName.Trim())
+                                         select ph).ToList();
+
+            PhotosModel photosModel = new PhotosModel()
+            {
+                CurrentPhotoId = currentPhotoId,
+                ChosenUser = user,
+                Photos = photos
+            };
+
+            return View("Photos", photosModel);
         }
 
         public ActionResult Search()
         {
             return View();
+        }
+
+        [HttpPost]
+        public ActionResult Search(string firstName, string lastName)
+        {
+            IEnumerable<User> foundUsers;
+
+            if (firstName.Trim() == string.Empty && lastName.Trim() == string.Empty)
+            {
+                foundUsers = (from u in Context.Users
+                              where u.UserName != User.Identity.Name
+                              select u).ToList();
+            }
+            else if (firstName.Trim() == string.Empty)
+            {
+                foundUsers = (from u in Context.Users
+                              where u.UserName != User.Identity.Name && u.LastName.Contains(lastName.Trim())
+                              select u).ToList();
+            }
+            else if (lastName.Trim() == string.Empty)
+            {
+                foundUsers = (from u in Context.Users
+                              where u.UserName != User.Identity.Name && u.FirstName.Contains(firstName.Trim())
+                              select u).ToList();
+            }
+            else
+            {
+                foundUsers = (from u in Context.Users
+                              where u.UserName != User.Identity.Name && u.FirstName.Contains(firstName.Trim()) &&
+                                    u.LastName.Contains(lastName.Trim())
+                              select u).ToList();
+            }
+
+            return View(foundUsers);
         }
 
         public ActionResult AddPhoto()
@@ -84,6 +145,8 @@ namespace InternetPhotoAlbum.Controllers
         [HttpPost]
         public async Task<ActionResult> AddPhoto(Photo pic, HttpPostedFileBase uploadImage)
         {
+            TempData["FoundPhotos"] = null;
+
             User user = await UserManager.FindByNameAsync(User.Identity.Name);
 
             if (ModelState.IsValid && uploadImage != null)
@@ -161,8 +224,8 @@ namespace InternetPhotoAlbum.Controllers
         public ActionResult UserSettings()
         {
             User user = (from u in Context.Users
-                           where u.UserName == User.Identity.Name
-                           select u).FirstOrDefault();
+                         where u.UserName == User.Identity.Name
+                         select u).FirstOrDefault();
 
             if (user == null)
             {
@@ -173,7 +236,7 @@ namespace InternetPhotoAlbum.Controllers
         }
 
         [HttpPost]
-        public ActionResult UserSettings(User model, HttpPostedFileBase uploadImage)
+        public ActionResult UserSettings(User model, HttpPostedFileBase uploadImage, string removePhoto)
         {
             User user = (from u in Context.Users
                          where u.UserName == User.Identity.Name
@@ -198,6 +261,11 @@ namespace InternetPhotoAlbum.Controllers
                         imageData = binaryReader.ReadBytes(uploadImage.ContentLength);
                     }
                     user.UserPhoto = imageData;
+                }
+
+                if (removePhoto != null)
+                {
+                    user.UserPhoto = null;
                 }
 
                 Context.Users.Attach(user);

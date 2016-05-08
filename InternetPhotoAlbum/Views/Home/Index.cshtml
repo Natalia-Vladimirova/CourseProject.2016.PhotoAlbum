@@ -9,7 +9,7 @@
 <div class="form-horizontal">
     <div class="row">
         <div>
-            @if (Model?.UserPhoto != null)
+            @if (Model.UserPhoto != null)
             {
                 <img class="col-md-5" src="data:image/jpeg;base64,@Convert.ToBase64String(Model.UserPhoto)" />
             }
@@ -26,21 +26,18 @@
                 @Model.DateOfBirth.ToShortDateString()
             </div>
 
-            @if (User.Identity.Name != Model?.UserName)
+            @if (User.Identity.Name != Model.UserName)
             {
                 <div class="form-group">
-                @using (Html.BeginForm("OtherPhotos", "Home", FormMethod.Post))
-                {
-                    <a href="/Home/OtherPhotos/@Model.Id" class="btn btn-default">
+                    <a href="/Home/Photos/0/@Model.UserName" class="btn btn-default">
                         See photo album of @Model.FirstName
                     </a>
-                }
                 </div>
             }
 
         </div>
         <div class="col-md-2 text-right">
-            @if (User.Identity.Name == Model?.UserName)
+            @if (User.Identity.Name == Model.UserName)
             {
                 if (User.IsInRole("admin"))
                 {

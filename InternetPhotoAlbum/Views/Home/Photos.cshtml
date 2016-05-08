@@ -1,25 +1,53 @@
-﻿@model List<InternetPhotoAlbum.Models.Photo>
+﻿@model InternetPhotoAlbum.Models.PhotosModel
 
 @{
     ViewBag.Title = "Photos";
 }
 
-<h2>@ViewBag.Title</h2>
-
-<p>
-    @Html.ActionLink("Add photo", "AddPhoto")
-</p>
-
-<div class="form-horizontal">
-    <div class="col-md-5 form-horizontal">
-        @PhotosList(Model)
+<div class="row form-horizontal">
+    <div class="col-md-6">
+        <h2>@ViewBag.Title</h2>
+        @if (User.Identity.Name == Model.ChosenUser.UserName)
+        {
+            <h5>
+                @Html.ActionLink("Back to profile", "Index/") |
+                @Html.ActionLink("Add photo", "AddPhoto")
+            </h5>
+        }
+        else
+        {
+            <h5>@Html.ActionLink("Back to profile", "Index", new { id = Model.ChosenUser.Id })</h5>
+        }
     </div>
-    <div class="col-md-7 form-horizontal">
-        @FirstImage(Model, ViewBag.CurrentPhotoId)
+    <div class="col-md-6 text-right">
+        <br />
+        <div class="row form-inline">
+            @using (Html.BeginForm("SearchPhotos", "Home", FormMethod.Post))
+            {
+                <div class="form-group"><input type="text" class="form-control" name="photoName" placeholder="Enter photo name ..." /></div>
+                <div class="form-group"><input type="submit" class="btn btn-default" value="Search" /></div>
+                @Html.HiddenFor(model => model.ChosenUser.UserName, new { @id = "userName", @Name = "userName" })
+                @Html.HiddenFor(model => model.CurrentPhotoId, new { @id = "currentPhotoId", @Name = "currentPhotoId" })
+            }
+        </div>
+        <div class="row">
+            <h5>@Html.ActionLink("Show all photos", "Photos", new { id = Model.CurrentPhotoId, userName = Model.ChosenUser.UserName })</h5>
+        </div>
     </div>
 </div>
 
-@helper PhotosList(List<InternetPhotoAlbum.Models.Photo> photos)
+<hr />
+
+<div class="row form-horizontal">
+    <div class="col-md-5 form-horizontal">
+        @PhotosList(Model?.Photos, Model?.ChosenUser?.UserName)
+    </div>
+    <div class="col-md-7 form-horizontal">
+        @FirstImage(Model?.Photos.ToList(), Model?.CurrentPhotoId ?? 0, Model?.ChosenUser.UserName)
+    </div>
+</div>
+
+@helper PhotosList(IEnumerable<InternetPhotoAlbum.Models.Photo> photos, string currentUserName)
 {
     if (photos != null)
     {
@@ -27,9 +55,18 @@
         {
             <div class="form-group">
                 <div class="col-md-5">
-                    <a href="/Home/ChangePhotoPosition/@photo.PhotoId">
-                        <img style="width:80px; height:60px;" src="data:image/jpeg;base64,@Convert.ToBase64String(photo.Image)" />
-                    </a>
+                    @if (User.Identity.Name == currentUserName)
+                    {
+                        <a href="/Home/Photos/@photo.PhotoId">
+                            <img style="width:80px; height:80px;" src="data:image/jpeg;base64,@Convert.ToBase64String(photo.Image)" />
+                        </a>
+                    }
+                    else
+                    {
+                        <a href="/Home/Photos/@photo.PhotoId/@currentUserName">
+                            <img style="width:80px; height:80px;" src="data:image/jpeg;base64,@Convert.ToBase64String(photo.Image)" />
+                        </a>
+                    }
                 </div>
                 <div class="col-md-7">
                     <h4>@photo.Name</h4>
@@ -40,7 +77,7 @@
     }
 }
 
-@helper FirstImage(List<InternetPhotoAlbum.Models.Photo> photos, int currentPhotoId)
+@helper FirstImage(List<InternetPhotoAlbum.Models.Photo> photos, int currentPhotoId, string currentUserName)
 {
     if (photos != null)
     {
@@ -49,7 +86,7 @@
         if (photo != null)
         {
             <div class="form-group">
-                <img src="data:image/jpeg;base64,@Convert.ToBase64String(photo.Image)" />
+                <img style="max-width:100%" src="data:image/jpeg;base64,@Convert.ToBase64String(photo.Image)" />
             </div>
             <div class="form-group">
                 <h3>@photo.Name</h3>
@@ -60,10 +97,13 @@
             <div class="form-group">
                 <label class="control-label">Total rate: @photo.TotalRate</label>
             </div>
-            <div class="form-group">
-                @Html.ActionLink("Edit info", "EditPhoto", new { id = photo.PhotoId }) |
-                @Html.ActionLink("Delete", "DeletePhoto", new { id = photo.PhotoId })
-            </div>
+            if (User.Identity.Name == currentUserName)
+            {
+                <div class="form-group">
+                    @Html.ActionLink("Edit info", "EditPhoto", new { id = photo.PhotoId }) |
+                    @Html.ActionLink("Delete", "DeletePhoto", new { id = photo.PhotoId })
+                </div>
+            }
         }
     }
 }
