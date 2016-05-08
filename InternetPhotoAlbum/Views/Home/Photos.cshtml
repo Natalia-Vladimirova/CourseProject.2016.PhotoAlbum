@@ -1,0 +1,69 @@
+﻿@model List<InternetPhotoAlbum.Models.Photo>
+
+@{
+    ViewBag.Title = "Photos";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<p>
+    @Html.ActionLink("Add photo", "AddPhoto")
+</p>
+
+<div class="form-horizontal">
+    <div class="col-md-5 form-horizontal">
+        @PhotosList(Model)
+    </div>
+    <div class="col-md-7 form-horizontal">
+        @FirstImage(Model, ViewBag.CurrentPhotoId)
+    </div>
+</div>
+
+@helper PhotosList(List<InternetPhotoAlbum.Models.Photo> photos)
+{
+    if (photos != null)
+    {
+        foreach (var photo in photos)
+        {
+            <div class="form-group">
+                <div class="col-md-5">
+                    <a href="/Home/ChangePhotoPosition/@photo.PhotoId">
+                        <img style="width:80px; height:60px;" src="data:image/jpeg;base64,@Convert.ToBase64String(photo.Image)" />
+                    </a>
+                </div>
+                <div class="col-md-7">
+                    <h4>@photo.Name</h4>
+                    <p>Total rate: @photo.TotalRate</p>
+                </div>
+            </div>
+        }
+    }
+}
+
+@helper FirstImage(List<InternetPhotoAlbum.Models.Photo> photos, int currentPhotoId)
+{
+    if (photos != null)
+    {
+        InternetPhotoAlbum.Models.Photo photo = photos.Find(ph => ph.PhotoId == currentPhotoId);
+
+        if (photo != null)
+        {
+            <div class="form-group">
+                <img src="data:image/jpeg;base64,@Convert.ToBase64String(photo.Image)" />
+            </div>
+            <div class="form-group">
+                <h3>@photo.Name</h3>
+            </div>
+            <div class="form-group">
+                <p>@photo.Description</p>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Total rate: @photo.TotalRate</label>
+            </div>
+            <div class="form-group">
+                @Html.ActionLink("Edit info", "EditPhoto", new { id = photo.PhotoId }) |
+                @Html.ActionLink("Delete", "DeletePhoto", new { id = photo.PhotoId })
+            </div>
+        }
+    }
+}
