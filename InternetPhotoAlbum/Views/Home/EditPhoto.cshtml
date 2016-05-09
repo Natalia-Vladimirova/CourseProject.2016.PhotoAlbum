@@ -44,7 +44,15 @@
         </div>
         <div class="col-md-5">
             <div class="form-group">
-                <img style="max-width:100%" src="data:image/jpeg;base64,@Convert.ToBase64String(Model.Image)" />
+                @if (Model.Image != null)
+                {
+                    <img style="max-width:100%" src="data:image/jpeg;base64,@Convert.ToBase64String(Model.Image)" />
+                }
+                else
+                {
+                    <br />
+                    <p class="text-muted text-center">No photo</p>
+                }
             </div>
         </div>
     </div>

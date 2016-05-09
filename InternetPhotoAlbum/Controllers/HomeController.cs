@@ -48,6 +48,7 @@ namespace InternetPhotoAlbum.Controllers
 
         public async Task<ActionResult> Photos(int id = 0, string userName = null)
         {
+            User currentUser = await UserManager.FindByNameAsync(User.Identity.Name);
             User user = null;
 
             if (userName != null)
@@ -57,14 +58,17 @@ namespace InternetPhotoAlbum.Controllers
 
             if (user == null)
             {
-                user = await UserManager.FindByNameAsync(User.Identity.Name);
+                user = currentUser;
             }
 
             PhotosModel photosModel = new PhotosModel()
             {
                 CurrentPhotoId = id,
                 ChosenUser = user,
-                Photos = user.Photos
+                Photos = user.Photos,
+                CurrentUserRating = (from r in Context.Ratings
+                                     where r.PhotoId == id && r.UserId == currentUser.Id
+                                     select r).FirstOrDefault()
             };
 
             return View(photosModel);
@@ -72,6 +76,7 @@ namespace InternetPhotoAlbum.Controllers
 
         public async Task<ActionResult> SearchPhotos(string photoName, string userName, int currentPhotoId = 0)
         {
+            User currentUser = await UserManager.FindByNameAsync(User.Identity.Name);
             User user = null;
 
             if (userName != null)
@@ -81,7 +86,7 @@ namespace InternetPhotoAlbum.Controllers
 
             if (user == null)
             {
-                user = await UserManager.FindByNameAsync(User.Identity.Name);
+                user = currentUser;
             }
 
             IEnumerable<Photo> photos = (from ph in Context.Photos
@@ -92,7 +97,10 @@ namespace InternetPhotoAlbum.Controllers
             {
                 CurrentPhotoId = currentPhotoId,
                 ChosenUser = user,
-                Photos = photos
+                Photos = photos,
+                CurrentUserRating = (from r in Context.Ratings
+                                     where r.PhotoId == currentPhotoId && r.UserId == currentUser.Id
+                                     select r).FirstOrDefault()
             };
 
             return View("Photos", photosModel);
@@ -221,6 +229,67 @@ namespace InternetPhotoAlbum.Controllers
             return View(photo);
         }
 
+        public ActionResult Rate(int id, string userName, int rating)
+        {
+            User currentUser = (from u in Context.Users
+                                where u.UserName == User.Identity.Name
+                                select u).FirstOrDefault();
+            User user;
+            user = (from u in Context.Users
+                    where u.UserName == userName
+                    select u).FirstOrDefault();
+
+            if (user == null)
+            {
+                user = currentUser;
+            }
+
+            Rating userRating = (from r in Context.Ratings
+                                 where r.PhotoId == id && r.UserId == currentUser.Id
+                                 select r).FirstOrDefault();
+
+            if (userRating == null)
+            {
+                userRating = new Rating
+                {
+                    PhotoId = id,
+                    UserId = currentUser.Id,
+                    UserRate = rating
+                };
+
+                Context.Ratings.Add(userRating);
+            }
+            else
+            {
+                userRating.UserRate = rating;
+                Context.Ratings.Attach(userRating);
+                Context.Entry(userRating).State = EntityState.Modified;
+            }
+
+            Context.SaveChanges();
+
+            return RedirectToAction($"Photos/{id}/{userName}");
+        }
+
+        public ActionResult RemoveRate(int id, string userName)
+        {
+            User currentUser = (from u in Context.Users
+                                where u.UserName == User.Identity.Name
+                                select u).FirstOrDefault();
+
+            Rating userRating = (from r in Context.Ratings
+                                 where r.PhotoId == id && r.UserId == currentUser.Id
+                                 select r).FirstOrDefault();
+
+            if (userRating != null)
+            {
+                Context.Ratings.Remove(userRating);
+                Context.SaveChanges();
+            }
+
+            return RedirectToAction($"Photos/{id}/{userName}");
+        }
+
         public ActionResult UserSettings()
         {
             User user = (from u in Context.Users
@@ -275,12 +344,6 @@ namespace InternetPhotoAlbum.Controllers
             }
 
             return View(user);
-        }
-
-        [Authorize(Roles = "admin")]
-        public ActionResult UsersEdit()
-        {
-            return View();
         }
 
     }

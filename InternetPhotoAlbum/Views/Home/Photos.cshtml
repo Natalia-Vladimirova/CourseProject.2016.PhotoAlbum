@@ -43,7 +43,7 @@
         @PhotosList(Model?.Photos, Model?.ChosenUser?.UserName)
     </div>
     <div class="col-md-7 form-horizontal">
-        @FirstImage(Model?.Photos.ToList(), Model?.CurrentPhotoId ?? 0, Model?.ChosenUser.UserName)
+        @BigPhoto(Model?.Photos.ToList(), Model?.CurrentPhotoId ?? 0, Model?.ChosenUser.UserName)
     </div>
 </div>
 
@@ -77,7 +77,7 @@
     }
 }
 
-@helper FirstImage(List<InternetPhotoAlbum.Models.Photo> photos, int currentPhotoId, string currentUserName)
+@helper BigPhoto(List<InternetPhotoAlbum.Models.Photo> photos, int currentPhotoId, string currentUserName)
 {
     if (photos != null)
     {
@@ -97,6 +97,47 @@
             <div class="form-group">
                 <label class="control-label">Total rate: @photo.TotalRate</label>
             </div>
+            <div class="form-group">
+                <div class="form-group col-md-3">
+                    <div class="dropdown">
+                        <div data-toggle="dropdown">
+                            <span class="glyphicon glyphicon-thumbs-up"></span>
+                            Who rated
+                        </div>
+                        <div class="dropdown-menu">
+                            @UsersWhoRated(photo.Ratings)
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group col-md-4">
+                    <div class="dropdown">
+                        <div data-toggle="dropdown">
+                            <span class="glyphicon glyphicon-star"></span>
+                            Rate this photo
+                        </div>
+                        <div class="dropdown-menu">
+                            @StarsMenu(5)
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group col-md-5">
+                    @if (Model.CurrentUserRating == null)
+                    {
+                        <p class="text-muted">Your rate: no rating</p>
+                    }
+                    else
+                    {
+                        <div>
+                            <span class="glyphicon glyphicon-ok"></span>
+                            Your rate: @Model.CurrentUserRating.UserRate | 
+                            <a href="/Home/RemoveRate/@Model.CurrentPhotoId/@Model.ChosenUser.UserName">
+                                <span class="glyphicon glyphicon-trash"></span>
+                                Remove rate
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
             if (User.Identity.Name == currentUserName)
             {
                 <div class="form-group">
@@ -106,4 +147,41 @@
             }
         }
     }
+}
+
+@helper UsersWhoRated(IEnumerable<InternetPhotoAlbum.Models.Rating> ratings)
+{
+    foreach (var rating in ratings)
+    {
+        if (rating.User != null)
+        {
+            <div class="col-md-12" style="min-width:250px">
+                <span class="glyphicon glyphicon-star"></span>
+                @rating.UserRate
+                <a href="/Home/Index/@rating.User.Id">
+                    @rating.User.FirstName @rating.User.LastName
+                </a>
+            </div>
+        }
+    }
+}
+
+@helper StarsMenu(int itemsCount)
+{
+    for (int i = 1; i <= itemsCount; i++)
+    {
+        <div class="col-md-12">
+            @RepeatLinkedStars(i)
+        </div>
+    }
+}
+
+@helper RepeatLinkedStars(int count)
+{
+    <a href="/Home/Rate/@Model.CurrentPhotoId/@Model.ChosenUser.UserName/@count">
+        @for (int i = 0; i < count; i++)
+        {
+            <span class="glyphicon glyphicon-star-empty"></span>
+        }
+    </a>
 }

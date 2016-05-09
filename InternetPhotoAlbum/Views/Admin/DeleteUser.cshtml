@@ -1,0 +1,46 @@
+﻿@model InternetPhotoAlbum.Models.User
+
+@{
+    ViewBag.Title = "Delete user";
+}
+
+<h2>@ViewBag.Title</h2>
+<hr />
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    @Html.HiddenFor(model => model.Id)
+
+    <div class="form-horizontal">
+        <div class="col-md-7 form-horizontal">
+            <div class="form-group lead">
+                @Html.DisplayFor(model => model.FirstName)
+                @Html.DisplayFor(model => model.LastName)
+            </div>
+
+            <div class="form-group">
+                @Html.DisplayFor(model => model.DateOfBirth)
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Delete user" class="btn btn-default" />
+                <a href="/Admin/UsersEdit" class="btn btn-default">Cancel</a>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="form-group">
+                @if (Model.UserPhoto != null)
+                {
+                    <img style="max-width:50%" src="data:image/jpeg;base64,@Convert.ToBase64String(Model.UserPhoto)" />
+                }
+                else
+                {
+                    <br />
+                    <p class="text-muted lead">No photo</p>
+                }
+            </div>
+        </div>
+    </div>
+}

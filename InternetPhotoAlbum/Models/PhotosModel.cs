@@ -10,5 +10,6 @@ namespace InternetPhotoAlbum.Models
         public int CurrentPhotoId { get; set; }
         public User ChosenUser { get; set; }
         public IEnumerable<Photo> Photos { get; set; }
+        public Rating CurrentUserRating { get; set; }
     }
 }

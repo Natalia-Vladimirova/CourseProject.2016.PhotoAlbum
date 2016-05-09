@@ -1,0 +1,47 @@
+﻿@model IEnumerable<InternetPhotoAlbum.Models.User>
+
+@{
+    ViewBag.Title = "Edit users";
+}
+
+<h2>All users</h2>
+<h5>@Html.ActionLink("Back to profile", "Index/", "Home")</h5>
+<hr />
+
+<div>
+    @ShowUsers(Model)
+</div>
+
+@helper ShowUsers(IEnumerable<InternetPhotoAlbum.Models.User> users)
+{
+    if (users != null)
+    {
+        foreach (var user in users)
+        {
+            <div class="row">
+                <a href="/Home/Index/@user.Id">
+                    <div class="col-md-2">
+                        @if (user.UserPhoto != null)
+                        {
+                            <img style="max-width:100%;" src="data:image/jpeg;base64,@Convert.ToBase64String(user.UserPhoto)" />
+                        }
+                        else
+                        {
+                            <br />
+                            <p class="text-muted text-center">No photo</p>
+                        }
+                    </div>
+                    <div class="col-md-5">
+                        <h4>@user.FirstName @user.LastName</h4>
+                        <p>@user.DateOfBirth.ToShortDateString()</p>
+                    </div>
+                </a>
+                <div class="col-md-5">
+                    @Html.ActionLink("Edit", "EditUser", new { id = user.Id }) |
+                    @Html.ActionLink("Delete", "DeleteUser", new { id = user.Id })
+                </div>
+            </div>
+            <br />
+        }
+    }
+}
