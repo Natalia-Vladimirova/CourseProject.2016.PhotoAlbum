@@ -6,13 +6,13 @@
 
 <h2>Settings</h2>
 <h5>@Html.ActionLink("Cancel", "Index")</h5>
-<hr />
+<hr class="col-md-12" />
 
-@using (Html.BeginForm("UserSettings", "Home", FormMethod.Post, new { @enctype = "multipart/form-data" }))
+@using (Html.BeginForm("UserSettings", "Home", FormMethod.Post, new { @enctype = "multipart/form-data", @class = "row form-horizontal" }))
 {
     @Html.AntiForgeryToken()
 
-    <div class="row form-horizontal">
+    <div>
         <div class="col-md-6 form-horizontal">
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
@@ -52,7 +52,7 @@
                     <label class="control-label">Photo</label>
                 </div>
                 <div class="col-md-9">
-                    <input type="file" name="uploadImage" @*accept="image/*,image/jpeg"*@ />
+                    <input type="file" name="uploadImage" accept="image/*" />
                 </div>
             </div>
 
@@ -73,16 +73,14 @@
             </div>
         </div>
         <div class="col-md-6 form-horizontal">
-            <div class="form-group">
-                @if (Model?.UserPhoto != null)
-                {
-                    <img src="data:image/jpeg;base64,@Convert.ToBase64String(Model.UserPhoto)" />
-                }
-                else
-                {
-                    <p class="text-muted text-center">No photo...</p>
-                }
-            </div>
+            @if (Model?.UserPhoto != null)
+            {
+                <img style="max-width:100%" src="data:image/jpeg;base64,@Convert.ToBase64String(Model.UserPhoto)" />
+            }
+            else
+            {
+                <p class="text-muted text-center">No photo...</p>
+            }
         </div>
     </div>
 }

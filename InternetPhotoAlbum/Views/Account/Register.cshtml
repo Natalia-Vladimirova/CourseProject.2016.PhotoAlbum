@@ -19,7 +19,7 @@
                 @Html.LabelFor(model => model.Login, new { @class = "control-label" })
             </div>
             <div class="col-md-9">
-                @Html.EditorFor(model => model.Login, new { @class = "form-control input-lg" })
+                @Html.EditorFor(model => model.Login, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.Login, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -28,7 +28,7 @@
                 @Html.LabelFor(model => model.FirstName, new { @class = "control-label" })
             </div>
             <div class="col-md-9">
-                @Html.EditorFor(model => model.FirstName, new { @class = "form-control input-lg" })
+                @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -37,7 +37,7 @@
                 @Html.LabelFor(model => model.LastName, new { @class = "control-label" })
             </div>
             <div class="col-md-9">
-                @Html.EditorFor(model => model.LastName, new { @class = "form-control input-lg" })
+                @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -46,7 +46,7 @@
                 @Html.LabelFor(model => model.DateOfBirth, new { @class = "control-label" })
             </div>
             <div class="col-md-9">
-                @Html.EditorFor(model => model.DateOfBirth, new { @class = "form-control input-lg" })
+                @Html.EditorFor(model => model.DateOfBirth, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.DateOfBirth, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -55,7 +55,7 @@
                 @Html.LabelFor(model => model.Password, new { @class = "control-label" })
             </div>
             <div class="col-md-9">
-                @Html.EditorFor(model => model.Password, new { @class = "form-control input-lg" })
+                @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -65,7 +65,7 @@
 
             </div>
             <div class="col-md-9">
-                @Html.EditorFor(model => model.PasswordConfirm, new { @class = "form-control input-lg" })
+                @Html.EditorFor(model => model.PasswordConfirm, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.PasswordConfirm, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -75,8 +75,3 @@
         </div>
     </div>
 }
-
-@*@section scripts
-{
-    @Scripts.Render("~/bundles/jqueryval")
-}*@

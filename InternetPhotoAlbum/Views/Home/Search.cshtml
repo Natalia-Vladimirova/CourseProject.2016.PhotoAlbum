@@ -5,7 +5,7 @@
 }
 <h2>@ViewBag.Title</h2>
 
-<div class="row form-inline">
+<div class="row col-md-12 form-inline">
     @using (Html.BeginForm("Search", "Home", FormMethod.Post))
     {
         <div class="form-group"><input type="text" class="form-control" name="firstName" placeholder="Enter first name" /></div>
@@ -15,7 +15,7 @@
     <br />
     <br />
 </div>
-<div class="row">
+<div class="row col-md-12">
     @ShowFoundUsers(Model)
 </div>
 

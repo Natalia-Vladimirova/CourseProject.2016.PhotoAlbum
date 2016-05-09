@@ -108,11 +108,5 @@ namespace InternetPhotoAlbum.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        //[ChildActionOnly]
-        //public ActionResult LoginPartial()
-        //{
-        //    return PartialView("_LoginPartial");
-        //}
-
     }
 }

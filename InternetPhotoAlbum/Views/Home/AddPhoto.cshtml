@@ -6,7 +6,7 @@
 
 <h2>Add photo</h2>
 <h5>@Html.ActionLink("Back to photos", "Photos")</h5>
-<hr />
+<hr class="col-md-12" />
 
 @using (Html.BeginForm("AddPhoto", "Home", FormMethod.Post, new { @enctype = "multipart/form-data" }))
 {
@@ -38,7 +38,7 @@
                 <label class="control-label">Image file</label>
             </div>
             <div class="col-md-9">
-                <input type="file" name="uploadImage" @*accept="image/*,image/jpeg"*@ />
+                <input type="file" name="uploadImage" accept="image/*" />
             </div>
         </div>
 

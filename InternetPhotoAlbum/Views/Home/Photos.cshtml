@@ -21,7 +21,7 @@
     </div>
     <div class="col-md-6 text-right">
         <br />
-        <div class="row form-inline">
+        <div class="row col-md-12 form-inline">
             @using (Html.BeginForm("SearchPhotos", "Home", FormMethod.Post))
             {
                 <div class="form-group"><input type="text" class="form-control" name="photoName" placeholder="Enter photo name ..." /></div>
@@ -30,15 +30,15 @@
                 @Html.HiddenFor(model => model.CurrentPhotoId, new { @id = "currentPhotoId", @Name = "currentPhotoId" })
             }
         </div>
-        <div class="row">
+        <div class="row col-md-12">
             <h5>@Html.ActionLink("Show all photos", "Photos", new { id = Model.CurrentPhotoId, userName = Model.ChosenUser.UserName })</h5>
         </div>
     </div>
 </div>
 
-<hr />
+<hr class="col-md-12" />
 
-<div class="row form-horizontal">
+<div class="row col-md-12 form-horizontal">
     <div class="col-md-5 form-horizontal">
         @PhotosList(Model?.Photos, Model?.ChosenUser?.UserName)
     </div>
@@ -129,7 +129,7 @@
                     {
                         <div>
                             <span class="glyphicon glyphicon-ok"></span>
-                            Your rate: @Model.CurrentUserRating.UserRate | 
+                            My rate: @Model.CurrentUserRating.UserRate | 
                             <a href="/Home/RemoveRate/@Model.CurrentPhotoId/@Model.ChosenUser.UserName">
                                 <span class="glyphicon glyphicon-trash"></span>
                                 Remove rate
